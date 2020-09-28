@@ -63,7 +63,50 @@ print(1/gamma)
 print(v3/v3_counter)
 print(1/beta + 1/alpha + 1/gamma)
 
+
+#f)
+
+Y0 = c(950,50,0)
+N = sum(Y0)
+
+alpha = 0.01
+gamma = 0.10
+beta_n <- function(Y) {
+  return (0.5 * Y[2]/N)
+}
+
+simulate_step <-  function(Y) {
+  I_new = rbinom(Y[1],1,beta_n(Y))
+  R_new = rbinom(Y[2],1,gamma)
+  S_new = rbinom(Y[3],1,alpha)
   
+  Y_new = c(Y[1] - I_new, Y[2] - R_new, Y[3] - S_new)
+  
+  return (Y_new)
+}
+
+iterations = 300
+
+simulate_and_plot_realization <- function(Y0,iterations) {
+  Y = Y0
+  S_n = integer(iterations)
+  I_n = integer(iterations)
+  R_n = integer(iterations)
+  
+  for (i in 1:iterations) {
+    Y = simulate_step(Y)
+    S_n[i] = Y[1]
+    I_n[i] = Y[2]
+    R_n[i] = Y[3]
+  }
+  plot(1:iterations,S_n,I_n)
+}
+
+
+simulate_and_plot_realization(Y0,iterations)
+
+
+
  
 
 

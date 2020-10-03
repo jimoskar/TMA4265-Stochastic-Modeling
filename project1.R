@@ -19,7 +19,7 @@ v3_counter = 0 # number of complete cycles
 year = 365
 
 state = 0
-for (i in 1:(year*20)) {
+for (i in 1:(year*100)) {
 
   
   newstate = sample.int(3, size = 1, replace = TRUE, prob = P[state+1,])-1
@@ -28,10 +28,12 @@ for (i in 1:(year*20)) {
     if(state == 0) {
       v1_counter = v1_counter + 1
       v3 = v3 +1
+      v2 = v2 +1
     }
     else if(state == 1) {
       v2_counter = v2_counter + 1
       v3 = v3 + 1
+      v2 = v2 + 1
     }
     else if(state == 2) {
       v3_counter = v3_counter + 1
@@ -41,6 +43,7 @@ for (i in 1:(year*20)) {
   else {
     if (state == 0) {
       v1 = v1 +1
+      v2 = v2 + 1
       v3 = v3 + 1}
     else if (state == 1) {
       v2 = v2 +1
@@ -58,7 +61,7 @@ print(v1/v1_counter)
 print(1/beta)
 
 print(v2/v2_counter)
-print(1/gamma)
+print(1/gamma + 1/beta)
 
 print(v3/v3_counter)
 print(1/beta + 1/alpha + 1/gamma)
@@ -99,8 +102,7 @@ simulate_and_plot_realization <- function(Y0,iterations) {
     I_n[i] = Y[2]
     R_n[i] = Y[3]
   }
-  plot(1:iterations,S_n)
-  lines
+  plot(1:iterations,S_n,I_n)
 }
 
 

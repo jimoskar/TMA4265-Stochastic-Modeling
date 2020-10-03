@@ -86,92 +86,123 @@ simulate_expected_values <- function(P, numSim = 1) {
 # ==============================================
 # PROBLEM 1F
 # ==============================================
+#Highlight the code underneath and run it to get the answers to f)
 
 
 
-#Ininitial distribution over the categories
-Y0 = c(950,50,0)
-N = sum(Y0)
+N <- 1000 # Individuals.
 
+Y0 <- c(950, 50, 0) # Starting state.
 
-#Probablities in the transition probability matrix
-alpha = 0.01
-gamma = 0.10
-beta_n <- function(Y) {
-  return (0.5 * Y[2]/N)
+# Probabilities (to begin with).
+gamma <- 0.10
+alpha <- 0.01
+beta <- function(Y){
+  return (0.5*Y[2]/N)
+}
+n <- 300 # Time steps.
+
+values <- matrix(data=NA,nrow=3,ncol=n) # Preallocate matrix for simulated values. 
+values[, 1] <- Y0
+
+# Run simulation.
+for (t in 2:n){
+  # Use a binomial to simulate. 
+  old_susc <- values[1, t-1]
+  old_inf <- values[2, t-1]
+  old_rec <- values[3, t-1]
+  
+  new_inf <- rbinom(n = 1, size = old_susc, beta(values[, t-1]))
+  new_rec <- rbinom(n = 1, size = old_inf, gamma) 
+  new_susc <- rbinom(n = 1,size =  old_rec, alpha) 
+  Y <- c(old_susc - new_inf + new_susc, old_inf - new_rec + new_inf, old_rec - new_susc + new_rec)
+  values[, t] <- Y
 }
 
-
-
-#Simulates a step in the Markov chain
-simulate_step <-  function(Y) {
-  I_new = rbinom(size = Y[1],1,beta_n(Y))
-  R_new = rbinom(size = Y[2],1,gamma)
-  S_new = rbinom(size = Y[3],1,alpha)
-  
-  Y_new = c(Y[1] - I_new + S_new, Y[2] - R_new + I_new, Y[3] - S_new + R_new)
-  
-  return (Y_new)
-}
-
-
-#simulates and plots the markov chain for a specified number of iterations
-simulate_and_plot_realization <- function(Y0,iterations) {
-  Y = Y0
-  S_n = integer(iterations)
-  S_n[1] = Y[1]
-  
-  I_n = integer(iterations)
-  I_n[1] = Y[2]
-  
-  R_n = integer(iterations)
-  R_n[1] = Y[3]
-  
-  
-  for (i in 2:(iterations+1)) {
-    Y = simulate_step(Y)
-    S_n[i] = Y[1]
-    I_n[i] = Y[2]
-    R_n[i] = Y[3]
-  }
-  t = seq(1,iterations+1, by = 1)
-  plot(t,S_n, type = "l", col = "blue", ylab = "[number of individuals]", xlab = "n [days]")
-  lines(t,I_n, col = "red")
-  lines(t,R_n, col = "green")
-  legend("topright",c("S (susceptible)","I (infected)", "R (recovered)"), fill = c("blue","red", "green"))
-  
-  M = matrix(c(S_n,I_n,R_n), nrow = 3, byrow = TRUE)
-  return (M)
-  
-}
-
-# +++++++++++++++++++
-# Run code under here
-# +++++++++++++++++++
-
-
-#iterations = 300
-#Y= simulate_and_plot_realization(Y0,iterations)
-
+par_lty <- c(3,2,1)
+par_col <- c("blue", "red", "green")
+plot(1:n, values[1, ], type = "l", lty = par_lty[1], col = par_col[1], xlab="Time [days]", ylab = "Individuals", main = "One Realization")
+lines(1:n, values[2, ], type = "l", lty = par_lty[2], col = par_col[2])
+lines(1:n, values[3, ], type = "l", lty = par_lty[3], col = par_col[3])
+legend("topright", legend= c("Susceptible", "Infected", "Recovered"), lty = par_lty, col = par_col)
 
 
 # ==============================================
 # PROBLEM 1G
 # ==============================================
+#Highlight the code underneath and run it to get the answers to g)
 
-iterations = 365 * 100
-Y = simulate_and_plot_realization(Y0,iterations)
-S_n = Y[1,]
-I_n = Y[2,]
-R_n = Y[3,]
+N <- 1000 # Individuals.
+
+Y0 <- c(950, 50, 0) # Starting state.
+
+# Probabilities (to begin with).
+gamma <- 0.10
+alpha <- 0.01
+beta <- function(Y){
+  return (0.5*Y[2]/N)
+}
+n <- 36500 # Time steps. 100 years. 
+
+values <- matrix(data=NA,nrow=3,ncol=n) # Preallocate matrix for simulated values. 
+values[, 1] <- Y0
+
+sim <- function(values){
+  # Run simulation.
+  for (t in 2:n){
+    # Use a binomial to simulate. 
+    old_susc <- values[1, t-1]
+    old_inf <- values[2, t-1]
+    old_rec <- values[3, t-1]
+    
+    new_susc <- rbinom(n = 1, size = old_susc, 1-beta(values[, t-1]))
+    new_inf <- rbinom(n = 1, size = old_inf, 1-gamma) 
+    new_rec <- rbinom(n = 1,size =  old_rec, 1-alpha) 
+    Y <- c(new_susc - (new_rec - old_rec), new_inf - (new_susc - old_susc), new_rec - (new_inf - old_inf))
+    values[, t] <- Y
+  }
+  return (values)
+}
+
+take.mean <- function(amount, fun = sim){
+  # Take mean of 'amount' number of simulations. 
+  average_susc <- c(length = amount)
+  average_inf <- c(length = amount)
+  average_rec <- c(length = amount)
+  
+  for (i in 1:amount){
+    # Take an average. 
+    val <- sim(values)
+    susc <- val[1, ncol(val)]/N
+    inf <- val[2, ncol(val)]/N
+    rec <- val[3, ncol(val)]/N
+    average_susc[i] <- susc
+    average_inf[i] <- inf
+    average_rec[i] <- rec
+  }
+  return (list("val" = val, "avg1" = mean(average_susc), "avg2" = mean(average_inf), "avg3" = mean(average_rec)))
+}
+
+amount <- 100 # Number of simulations to take mean over. 
+avg_prop <- take.mean(amount, sim)
+val <- avg_prop$val # Values to plot. 
+
+# Parameters for color and linetypes in plot. 
+par_lty <- c(3,2,1)
+par_col <- c("blue", "red", "green")
+
+# Plot the lines. 
+plot(1:n, val[1, ], type = "l", lty = par_lty[1], col = par_col[1], xlab="Time [days]", 
+     ylab = "Individuals", main = capture.output(cat("Mean over ", amount, " realizations")))
+lines(1:n, val[2, ], type = "l", lty = par_lty[2], col = par_col[2])
+lines(1:n, val[3, ], type = "l", lty = par_lty[3], col = par_col[3])
+legend("topright", legend= c("Susceptible", "Infected", "Recovered"), lty = par_lty, col = par_col)
 
 # Print simulated values. 
 print("Mean Proportions:", quote=FALSE)
-cat("Susceptible: ",sum(S_n)/(iterations*N), "\n")
-cat("Infeceted:", sum(I_n)/(iterations*N), "\n")
-cat("Recovered: ", sum(R_n)/(iterations*N), "\n")
-
-
+cat("Susceptible ", avg_prop$avg1, "\n")
+cat("Infected ", avg_prop$avg2, "\n")
+cat("Recovered ", avg_prop$avg3)
 
 # ==============================================
 # PROBLEM 1H

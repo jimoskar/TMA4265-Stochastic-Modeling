@@ -220,7 +220,7 @@ find.expected.values <- function(values, amount, n, fun = sim){
     argmax[i] <- t
   }
 
-  return (list("exp1" = mean(maximums), "exp2" = mean(t)))
+  return (list("exp1" = mean(maximums), "exp2" = mean(argmax)))
 }
 
 # ++++++++++++++

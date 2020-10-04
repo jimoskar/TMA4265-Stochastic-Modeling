@@ -89,7 +89,6 @@ cat("Simulated value 3: ", result[3], "\n")
 
 # Probabilities in the transition probability matrix. 
 # alpha and gamma are already defined above. 
-
 beta_n <- function(Y) {
   return (0.5 * Y[2]/N)
 }
@@ -298,9 +297,9 @@ calculate.claims <- function(claims) {
   return(result)
 }
 
-# +++++++++++++++++++
-# Run code under here
-# +++++++++++++++++++
+# ++++++++++++++
+# Run code below
+# ++++++++++++++
 
 claims <- simulate_pois(lambda,0,59,plot = FALSE, numSim = 1000*10)
 res <- calculate.claims(claims)

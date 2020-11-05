@@ -282,7 +282,7 @@ cat("Probability: ", num, "\n")
 simulate_pois(lambda,0,59,plot = TRUE, numSim = 10)
 
 # ==============================================
-# PROBLEM 2B
+# PROBLEM 2b)
 # ==============================================
 
 # Takes a list of Poisson distributed values (claims) and returns the size of the claims summed together

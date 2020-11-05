@@ -19,7 +19,7 @@ simulate_pois <- function(lambda, t_start,t_end, plot, numSim = 1) {
     
     if(plot && i == 1) {
     
-      plot(NULL, NULL, xlim = c(t_start, t_end), ylim = c(0, n), xlab = "Time [days]", lwd = 2, ylab = "Claims", main = "Insurance Claims")
+      plot(NULL, NULL, xlim = c(t_start, t_end), ylim = c(0, n), xlab = "Time [days]", lwd = 2, ylab = "Claims", main = "Insurance Claims: 10 Realizations", cex = 2)
       for(i in 1:n) {
         lines(w_vec[i:(i+1)], rep(x_vec[i],2), lwd = 1)
       }
@@ -33,11 +33,35 @@ simulate_pois <- function(lambda, t_start,t_end, plot, numSim = 1) {
   return (result)
 }
 
-simulate_pois(lambda,0,59,plot = TRUE)
+#simulate_pois(lambda,0,59,plot = TRUE)
 res <- simulate_pois(lambda,0,59,plot = FALSE, numSim = 1000)
 num <- sum(res > 100)/length(res)
 num
 
 simulate_pois(lambda,0,59,plot = TRUE, numSim = 10)
 
+#b)
+res <- simulate_pois(lambda,0,59,plot = FALSE, numSim = 1000)
+mean(res)
+var(res)
+
+
+calculate.claims <- function(claims) {
+  result = rep(0,length(claims))
+  for (i in 1:length(claims)) {
+    for (j in 1:claims[i]) {
+      c <-  rexp(1,rate = 10)
+      result[i] <- result[i] + c
+    }
+  }
+  return(result)
+}
+
+claims <- simulate_pois(lambda,0,59,plot = FALSE, numSim = 1000*10)
+claims
+res <- calculate.claims(claims)
+
+
+mean(res)
+var(res)
 

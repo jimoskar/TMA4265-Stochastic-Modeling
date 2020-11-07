@@ -31,7 +31,7 @@ get_cov <-  function(vecA,vecB) {
 
 Sigma_AB <-  get_cov(theta_grid, sample_points)
 Sigma_AA <-  get_cov(theta_grid, theta_grid)
-Sigma_BB <- get_cov(sample_theta, sample_points)
+Sigma_BB <- get_cov(sample_points, sample_points)
 
 
 muA <-  rep(mu,length(theta_grid))
@@ -114,16 +114,3 @@ standardize
 probs <-  pnorm(standardize)
 plot(theta_grid, probs)
 lines(theta_grid, probs)
-
-
-
-
-
-
-
-
-
-
-
-
-

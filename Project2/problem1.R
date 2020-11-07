@@ -1,8 +1,7 @@
 #Project 2 Stochastic Modelling
+#Promblem 1: Modelling the common cold
 
-#1.c
-
-
+#constants
 alpha = 0.1
 lambda = 1/100
 mu_L = 1/7
@@ -20,7 +19,6 @@ simulate_markov <- function(state0, tEnd, plot) {
          ylim = c(-0.2, 2.2), 
          xlab = "Time (days)", 
          lwd = 5,
-         col = "red",
          ylab = "State", 
          main = "One Realization, 5 years")
     }
@@ -88,11 +86,28 @@ simulate_markov <- function(state0, tEnd, plot) {
   return (c(time_infected/tEnd,mean(time_between_Ih_list)))
 }
 
+
+get_mean <- function(state0, tEnd, numSim) {
+  result_list <- c()
+  for (i in 1:numSim) {
+    result <- simulate_markov(0,tEnd,FALSE)
+    result_list <- c(result_list,result[2])
+  }
+  return (mean(result_list))
+}
+
+
+#1.c
 tEnd = 1000*365
 result <-  simulate_markov(0, tEnd, FALSE)
 time_infected <- result[1]
-cat("Proportion of time infected: ",time_infected)
+cat("Proportion of time infected in one realization: ",time_infected)
 
-print(result[2])
+
+#1.e
+numSim = 1
+result <- get_mean(0,tEnd,numSim)
+cat("Average time between heavy infections over ", numSim, " realizations: ", result)
+
 
 

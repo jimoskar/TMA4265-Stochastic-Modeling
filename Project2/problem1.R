@@ -98,14 +98,18 @@ get_mean <- function(state0, tEnd, numSim) {
 
 
 #1.c
-tEnd = 1000*365
+tEnd =  5*365
+result <-  simulate_markov(0, tEnd, TRUE)
+
+
+#1.d
+tEnd =  1000*365
 result <-  simulate_markov(0, tEnd, FALSE)
 time_infected <- result[1]
 cat("Proportion of time infected in one realization: ",time_infected)
 
-
 #1.e
-numSim = 1
+numSim = 500
 result <- get_mean(0,tEnd,numSim)
 cat("Average time between heavy infections over ", numSim, " realizations: ", result)
 

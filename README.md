@@ -1,1 +1,1 @@
-# TMA4265-Stochastic-Modeling
+# Projects and exercises from the course Stochastic Modeling

@@ -41,15 +41,16 @@ muC <- muA + Sigma_AB %*% solve(Sigma_BB) %*% (sample_values - muB)
 Sigma_C <- Sigma_AA - Sigma_AB %*% solve(Sigma_BB) %*% t(Sigma_AB)
 
 
+#Calculates a realization.
 L = chol(Sigma_C)
 z <- rnorm(length(theta_grid))
 predict <- muC + L %*% z
 
+#plot the conditional mean or a realization.
+plot(theta_grid, muC)
+lines(theta_grid, muC)
 
-plot(theta_grid, predict)
-lines(theta_grid, predict)
-
-#prediction interval
+#prediction interval.
 z005 = qnorm(0.95)
 
 upper = muC + z005*sqrt(diag(Sigma_C))
@@ -61,13 +62,17 @@ lines(theta_grid,lower, col = "red")
 
 
 #2.b
-library(expm)   
 y <- rep(0.30,length(theta_grid))
-std_matrix <- Sigma_C %^% -0.5
-standardize <- std_matrix %*% (y - muC)
-probs <- pnorm(standardize)
-plot(theta_grid, probs)
-lines(theta_grid, probs)
+var_vec<- diag(Sigma_C)
+std_vec <-  sqrt(var_vec)
+standardize <- (y - muC) / std_vec
+probs1 <- pnorm(standardize)
+
+plot(theta_grid, probs1,
+     main = "Conditional Probability as Function of Theta", 
+     ylab = "Conditional Prob.",
+     xlab = "Theta")
+lines(theta_grid, probs1)
 
 #2.c
 
@@ -106,11 +111,17 @@ lower = muC - z005*sqrt(diag(Sigma_C))
 lines(theta_grid,upper, col = "green")
 lines(theta_grid,lower, col = "red")
 
+
 y <- rep(0.30,length(theta_grid))
-std_matrix <- Sigma_C %^% -0.5
-muC
-standardize <- solve(std_matrix) %*% (y - muC)
-standardize
-probs <-  pnorm(standardize)
-plot(theta_grid, probs)
-lines(theta_grid, probs)
+var_vec<- diag(Sigma_C)
+std_vec <-  sqrt(var_vec)
+standardize <- (y - muC) / std_vec
+probs2 <- pnorm(standardize)
+
+
+plot(theta_grid, probs2,
+     main = "Conditional Probability as Function of Theta", 
+     ylab = "Conditional Prob.",
+     xlab = "Theta")
+lines(theta_grid, probs2)
+lines(theta_grid, probs1)

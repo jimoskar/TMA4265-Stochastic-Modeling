@@ -1,1 +1,2 @@
-# Projects and exercises from the course Stochastic Modeling
+# stochMod
+Projects and exercises from the course 'Stochastic Modeling'
